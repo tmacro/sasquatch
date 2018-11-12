@@ -1,0 +1,47 @@
+_COMMON:
+  soft_required: &soft_bkt_key
+    - bucket
+    - key
+  optional: &opt_ver_id
+    - version_id
+
+
+LS:
+  symbol: ls
+  desc: List bucket or objects from storage
+  optional:
+    - bucket
+  positional_order:
+    - bucket
+
+HEAD:
+  symbol: head
+  desc: Get an object's info from storage
+  soft_required: *soft_bkt_key
+  optional: *opt_ver_id
+
+GET:
+  symbol: get
+  desc: Get an object from storage
+  soft_required: *soft_bkt_key
+  optional: *opt_ver_id
+
+PUT:
+  symbol: put
+  desc: Upload an object into storage
+  soft_required:
+    - bucket
+    - key
+
+CP:
+  symbol: cp
+  desc: Copy object on the cloud
+  hard_required:
+    - target_bucket
+  soft_required:
+    - bucket
+    - key
+    - target_key
+  positional_order:
+    - target_bucket
+    - target_key

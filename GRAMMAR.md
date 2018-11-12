@@ -7,6 +7,15 @@ sq consists of two principle symbols `Verbs` and `Nouns`.
 Sets of `Verbs` and `Nouns` can be chained together to form `Clauses`.
 Data flows from left to right with the output of one `Verb` becoming the input for the next.
 
+## Character Set
+
+`abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789./=:|`
+
+regex: `[a-zA-Z0-9./=:|]`
+
+> The characters `:=|` area reserved for language delimiters
+
+
 ## Verbs
 
 `Verbs` are analogous to functions with `Nouns` being their arguments.
