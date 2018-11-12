@@ -1,5 +1,7 @@
 from .safe import firstel
+from .log import Log
 
+_log = Log('util.fsm')
 
 class Record:
 	def __init__(self):
@@ -29,6 +31,7 @@ class State:
 	_valid_next = []
 
 	def __init__(self, record):
+		self._log = Log('util.fsm.State')
 		self._record = record
 		self._next = False
 
@@ -40,12 +43,12 @@ class State:
 		return state in self._valid_next
 
 	def _transition(self, state):
-		print('Trying to trasition to %s'%state)
+		self._log.debug('Initiating transition to %s'%state)
 		if self._allow_next(state):
 			self._next = state
-			print('Successfully transtioned to %s'%state)
+			self._log.debug('Successfully initiated transition to %s'%state)
 			return True
-		print('Failed to transition to %s'%state)
+		self._log.debug('Failed to initiate transition to %s'%state)
 		return False
 
 	def __call__(self, data):
@@ -63,6 +66,7 @@ class State:
 
 class Actor:
 	def __init__(self, starting, states):
+		self._log = Log('util.fsm.Actor')
 		self._current = None
 		self._state = None
 		self._possible = states
@@ -73,13 +77,13 @@ class Actor:
 		state = self._possible.get(name)
 		if state is None:
 			raise Exception
-		print('State transition requested to %s'%name)
+		self._log.debug('State transition requested to %s'%name)
 		if state.allow(self._current):
 			self._state = state(self._record)
 			self._current = name
-			print('State transition allowed to %s'%name)
+			self._log.debug('State transition allowed to %s'%name)
 			return True
-		print('State transition denied to %s'%name)
+		self._log.debug('State transition denied to %s'%name)
 		return False
 
 	def __call__(self, data):

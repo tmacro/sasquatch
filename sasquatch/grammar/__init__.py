@@ -15,9 +15,8 @@ with open(GRAMMAR_FILE) as grammar_file:
 			continue
 		verb.verb_builder(label, **vconf)
 
-print(list(v._positional_order for _, v in VERBS.items()))
 
 def parse(expr):
 	tokens = lex.tokenize(expr)
 	verbs = list(_parse.parse(tokens, VERBS))
-	print(verbs)
+	return verbs

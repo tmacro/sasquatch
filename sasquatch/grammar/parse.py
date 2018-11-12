@@ -37,6 +37,4 @@ def parse(tokens, verbs):
 			else:
 				keyword.append(noun)
 		keyword = {n.keyword:n.value for n in keyword}
-		print(positional)
-		print(keyword)
 		yield verb_cls(*positional, **keyword)

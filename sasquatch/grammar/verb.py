@@ -1,5 +1,8 @@
 from itertools import chain
 from ..error import InvalidVerbError, ExtraKeyword, MissingArgument, TooManyArguments, MissingKeyword
+from ..util.log import Log
+
+_log = Log('grammar.verb')
 
 VERBS = {}
 
@@ -24,7 +27,6 @@ class BaseVerb:
 			self._positional_order = self._soft_required[:]
 		self._check_args(*args)
 		kwargs.update({k:v.value for k, v in self._resolve_positional(*args)})
-		print(kwargs)
 		self._check_kwargs(**kwargs)
 		self._kwargs = kwargs
 
@@ -34,7 +36,6 @@ class BaseVerb:
 		return True
 
 	def _check_kwargs(self, strict=False, **kwargs):
-		print(kwargs)
 		# Build our lists of valid keywords
 		required = self._hard_required[:]
 		optional = self._optional[:]
@@ -44,7 +45,6 @@ class BaseVerb:
 			required += self._soft_required[:]
 		else:
 			optional += self._soft_required[:]
-		print(required, optional)
 		# Iterate over our keys removing them from our
 		# lists if they're there
 		for key in kwargs.keys():
@@ -56,7 +56,6 @@ class BaseVerb:
 				raise ExtraKeyword(key, verb=self._symbol, nouns=kwargs)
 		# if there are any left raise an exception
 		if required:
-			print(required, optional)
 			raise MissingKeyword(', '.join(required))
 		return True
 
@@ -101,8 +100,9 @@ def get_or_raise(dikt, key, err):
 		raise err
 	return dikt.get(key)
 
+_builder_log = Log('grammar.verb.builder')
 def verb_builder(name, **kwargs):
-	print('Loading verb %s'%name)
+	_builder_log.debug('Loading verb %s'%name)
 	symbol = get_or_raise(kwargs, 'symbol', InvalidVerbError(name, 'symbol'))
 	desc = kwargs.get('desc', None)
 	hard_required = kwargs.get('hard_required', [])
@@ -146,4 +146,4 @@ def verb_builder(name, **kwargs):
 # 	_symbol = 'get'
 # 	_soft_required = ['bucket', 'key']
 # 	_optional = ['version_id']
-	_positional_order = ['bucket', 'key']
+	# _positional_order = ['bucket', 'key']

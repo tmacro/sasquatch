@@ -55,7 +55,6 @@ class Noun(Word):
 		self._keyword = None
 
 	def _process(self, char):
-		print('"%s"'%char)
 		if char == ' ' and not self._token and not self._keyword:
 			return None
 		if self._is_end(char):
