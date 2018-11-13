@@ -6,8 +6,6 @@ from itertools import chain
 VerbT = namedtuple('Verb', ['name'])
 NounT = namedtuple('Noun', ['keyword', 'value'])
 
-
-
 class Word(State):
 	_word_delim = r'.'
 	def __init__(self, *args, **kwargs):

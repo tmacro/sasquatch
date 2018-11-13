@@ -23,16 +23,18 @@ def find_chunk(tokens):
 
 
 def parse(tokens, verbs):
-	for verb, nouns in find_chunk(tokens):
+	for position, (verb, nouns) in enumerate(find_chunk(tokens)):
 		if not verb.name in verbs:
-			raise sqerror.SQSyntaxError(verb.name)
+			raise sqerror.SyntaxError(sqerror.SQSyntaxError ,verb.name, position=position)
+			# raise sqerror.SQSyntaxError(verb.name, position = position)
 		verb_cls = verbs[verb.name]
 		positional = []
 		keyword = []
 		for noun in nouns:
 			if noun.keyword is None:
 				if keyword: # If keyword args already exist
-					raise sqerror.SQSyntaxError(noun.value)
+					raise sqerror.SyntaxError(sqerror.SQSyntaxError, noun.value, verb=verb_cls, position=position)
+					# raise sqerror.SQSyntaxError(noun.value, position = position)
 				positional.append(noun)
 			else:
 				keyword.append(noun)

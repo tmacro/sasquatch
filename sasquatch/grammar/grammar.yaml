@@ -1,10 +1,24 @@
+
+#------------------------------------------------------------------------------
+# Format
+# MYVERBNAME:             The name of my verb
+#   symbol: myverbsymbol  The symbol in sq that will id this verb
+#   desc: Its a verb!     Short description of function
+#   hard_required: []     These keywords **have** to be defined in the code
+#   soft_required: []     These keywords are required but can be built from input
+#   optional: []          These keywords are completely optional
+#   positional_order: []  Positional variables will be mapped to keywords in this order
+#
+#   Top level keys beginning with "_" will be ignored
+#------------------------------------------------------------------------------
+
+
 _COMMON:
   soft_required: &soft_bkt_key
     - bucket
     - key
   optional: &opt_ver_id
     - version_id
-
 
 LS:
   symbol: ls
