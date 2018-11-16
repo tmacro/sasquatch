@@ -1,6 +1,52 @@
 
 
 
+
+class ErrorMixin:
+	'''Mixin to provide context aware error messages to the user'''
+
+	def __init__(self *args, **kwargs):
+		self._filename = kwargs.get('filename')
+		self._lineno = kwargs.get('lineno')
+		self._text = kwargs.get('text')
+		self._offset = kwargs.get('ooffset')
+		self._msg = kwargs.get('msg')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 class BaseError(Exception):
 	_msg = "There's been an error!"
 	def __init__(self, *args, verb = None, nouns = None, position = None):
