@@ -118,6 +118,8 @@ def verb_builder(name, **kwargs):
 		_soft_required = soft_required
 		_optional = optional
 		_positional_order = positional_order
+	_Verb.__name__ = name
+	_Verb.__qualname__= 'grammar.verb.%s'%(name.upper())
 	add_verb(_Verb)
 
 

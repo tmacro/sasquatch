@@ -1,5 +1,5 @@
 from ..util.fsm import State, Actor
-from ..util.safe import firstel
+from ..util.conv import firstel
 from .lex import VerbT, NounT
 from .. import error as sqerror
 

@@ -1,4 +1,6 @@
 from collections.abc import Iterable
+from io import StringIO
+
 
 def firstel(lst):
 	'''
@@ -11,3 +13,7 @@ def firstel(lst):
 	except Exception:
 		return lst
 	return unpacked
+
+
+class FakeSTDIN(StringIO):
+	name = '<stdin>'
