@@ -56,6 +56,7 @@ class MissingPositionalArgumentError(SQSyntaxError):
 		if 'token' in kwargs:
 			token = kwargs.get('token')
 			kwargs['verb'] = token.name
+		super().__init__(**kwargs)
 
 
 class TooManyArgumentsError(SQSyntaxError):
@@ -65,3 +66,17 @@ class TooManyArgumentsError(SQSyntaxError):
 class ArgumentsOutOfOrderError(SQSyntaxError):
 	'''Raised when positional arguments are passed after keyowrd arguments have been used'''
 	_msg = 'Positional arguments found after keyword arguments!'
+	def __init__(self, **kwargs):
+		if 'token' in kwargs:
+			token = kwargs.get('token')
+			kwargs['noun'] = token.keyword
+		super().__init__(**kwargs)
+
+class DuplicateKeywordError(SQSyntaxError):
+	'''Raised when two arguments with the same keyword are passed'''
+	_msg = '{keyword} passed twice to {verb}'
+	def __init__(self, **kwargs):
+		if 'token' in kwargs:
+			token = kwargs.get('token')
+			kwargs['keyword'] = token.keyword
+		super().__init__(**kwargs)

@@ -23,8 +23,18 @@ class TextMachine(Machine):
 	def _grab_text(self, start, stop, line):
 		return line[start:stop]
 
-	def __call__(self, lines):
+	def _is_comment(self, line):
+		return line.startswith('#')
+
+	def _filter_lines(self, lines):
 		for lineno, line in enumerate(lines):
+			stripped = line.strip()
+			print('"%s"\n"%s"'%(line, stripped))
+			if stripped and not self._is_comment(stripped):
+				yield lineno, stripped
+
+	def __call__(self, lines):
+		for lineno, line in self._filter_lines(lines):
 			token_start = None
 			for offset, char in enumerate(chain(line, [''])):
 				if token_start is None:
@@ -41,14 +51,15 @@ class FileMachine(TextMachine):
 		ctx = super()._build_context(*args, **kwargs)
 		return ctx._replace(filename=self._filename)
 
+
 	def __call__(self, fd):
 		self._filename = fd.name
-		lines = fd.readlines()
-		return super().__call__(lines)
+		return super().__call__(fd.readlines())
 
 class Word(State):
 	_name: 'Word'
 	_word_delim = r'.'
+
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
 		self.__delim = None
@@ -68,6 +79,12 @@ class Word(State):
 			return True
 		return False
 
+	_ws_regex = re.compile(r'\w')
+	def _is_ws(self, char):
+		if self._ws_regex.match(char):
+			return True
+		return False
+
 	def _add(self, char):
 		self._token += char
 
@@ -76,7 +93,7 @@ class Verb(Word):
 	_name = 'Verb'
 	_valid_previous = [None, 'Noun']
 	_valid_next = ['Noun']
-	_word_delim = r'[:|]'
+	_word_delim = r'[:|#]'
 
 	def _process(self, char):
 		if char == ' ':
@@ -91,7 +108,7 @@ class Noun(Word):
 	_name = 'Noun'
 	_valid_previous = ['Verb', 'Noun']
 	_valid_next = ['Verb', 'Noun']
-	_word_delim = r'[:|]'
+	_word_delim = r'[:|\n#]'
 
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
@@ -111,7 +128,6 @@ class Noun(Word):
 			self._token = ''
 			return None
 		self._add(char)
-
 
 states = [
 	Verb,
