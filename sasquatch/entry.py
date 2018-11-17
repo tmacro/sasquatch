@@ -1,9 +1,12 @@
-from .eval import eval_expr
-import sys
 import os.path
+import sys
+
+from .eval import eval_expr
 from .tests import test
-from .error import SQError, SQSyntaxError, ReportError
+from .util import log
 from .util.conv import FakeSTDIN
+
+
 USAGE='''Not enough arguments provided!
 Usage: %s '<expr>\''''
 
@@ -17,12 +20,10 @@ def entry():
 	try:
 		main()
 	except Exception as err:
-		# if isinstance(err, SQSyntaxError):
-		# 	print(ReportError(err))
-		# elif isinstance(err, SQError):
-		# 	print(err)
-		# sys.exit(1)
-		raise
+		print(err)
+		if log.DEBUG:
+			raise
+		sys.exit(-1)
 
 def main():
 	args = parse_args()

@@ -16,6 +16,9 @@ class BaseError(Exception):
 			self._msg.format(**self._fmt_args)
 		)
 
+	def __str__(self):
+		return self.__repr__()
+
 
 class SQError(BaseError):
 	'''Root error for all Sasquatch exceptions'''

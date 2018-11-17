@@ -24,7 +24,6 @@ class TextMachine(Machine):
 		return line[start:stop]
 
 	def __call__(self, lines):
-		print(lines)
 		for lineno, line in enumerate(lines):
 			token_start = None
 			for offset, char in enumerate(chain(line, [''])):
@@ -45,7 +44,6 @@ class FileMachine(TextMachine):
 	def __call__(self, fd):
 		self._filename = fd.name
 		lines = fd.readlines()
-		lines + ['']
 		return super().__call__(lines)
 
 class Word(State):

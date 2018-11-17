@@ -1,3 +1,5 @@
+import logging
+
 from .util.log import setupLogging
 import logging
 
