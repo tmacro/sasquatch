@@ -26,42 +26,6 @@ class Record:
 		return firstel(self._record[-1:])
 
 
-# class State:
-# 	_valid_previous = []
-# 	_valid_next = []
-
-# 	def __init__(self, record):
-# 		self._log = Log('util.fsm.State')
-# 		self._record = record
-# 		self._next = False
-
-# 	@classmethod
-# 	def allow(cls, prev):
-# 		return prev in cls._valid_previous
-
-# 	def _allow_next(self, state):
-# 		return state in self._valid_next
-
-# 	def _transition(self, state):
-# 		self._log.debug('Initiating transition to %s'%state)
-# 		if self._allow_next(state):
-# 			self._next = state
-# 			self._log.debug('Successfully initiated transition to %s'%state)
-# 			return True
-# 		self._log.debug('Failed to initiate transition to %s'%state)
-# 		return False
-
-# 	def __call__(self, data):
-# 		processed = self._process(data)
-# 		if self._next:
-# 			return processed, self._next
-# 		return processed, None
-
-# 	def _process(self, data):
-# 		# Do processing here
-# 		# Return data to the user or None for nothing
-# 		# call self._transition to change to a new state
-# 		return None
 
 
 class Actor:
