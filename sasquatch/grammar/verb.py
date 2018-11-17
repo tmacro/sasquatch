@@ -1,5 +1,8 @@
 from itertools import chain
-from ..error import InvalidVerbError, ExtraKeyword, MissingArgument, TooManyArguments, MissingKeyword
+from ..error.infra import InvalidVerbDefinitionError
+from ..error.infra import InfraErrorHelper as infraerrors
+from ..error.syntax import SyntaxErrorHelper as stxerrors
+from ..error.syntax import MissingKeywordError, MissingPositionalArgumentError, ExtraKeywordError, TooManyArgumentsError
 from ..util.log import Log
 
 _log = Log('grammar.verb')
@@ -22,17 +25,19 @@ class BaseVerb:
 	# Order keywords will be matched to positional arguments
 	_positional_order = None
 
-	def __init__(self, *args, **kwargs):
+	def __init__(self, *args, ctx=None, **kwargs):
+		self._context = ctx
 		if self._positional_order is None:
 			self._positional_order = self._soft_required[:]
 		self._check_args(*args)
-		kwargs.update({k:v.value for k, v in self._resolve_positional(*args)})
+		kwargs.update(self._resolve_positional(*args))
 		self._check_kwargs(**kwargs)
 		self._kwargs = kwargs
-
 	def _check_args(self, *args):
-		if len(args) > len(self._positional_order):
-			raise TooManyArguments(self._optional, self._positional_order)
+		takes = len(self._positional_order)
+		given = len(args)
+		if given > takes:
+			stxerrors.throw(TooManyArgumentsError, verb=self._symbol, takes=takes, given=given, ctx=args[-1].context)
 		return True
 
 	def _check_kwargs(self, strict=False, **kwargs):
@@ -47,22 +52,29 @@ class BaseVerb:
 			optional += self._soft_required[:]
 		# Iterate over our keys removing them from our
 		# lists if they're there
+		last_key = None
 		for key in kwargs.keys():
 			if key in required:
 				required.remove(key)
 			elif key in optional:
 				optional.remove(key)
 			else: # raise an exception if it's extra
-				raise ExtraKeyword(key, verb=self._symbol, nouns=kwargs)
+				stxerrors.throw(ExtraKeywordError, verb=self._symbol, keyword=key, ctx=kwargs[key].context)
+			last_key = key
 		# if there are any left raise an exception
 		if required:
-			raise MissingKeyword(', '.join(required))
+			if last_key:
+				ctx = kwargs[last_key].context
+			else:
+				ctx = self._context
+			stxerrors.throw(MissingKeywordError, verb=self._symbol, keyword=required[0], ctx=ctx)
+
 		return True
 
 	def _resolve_positional(self, *args, position = 0):
 		if not self._check_args(*args):
 			raise Exception
-		return list(zip(self._positional_order[position:], args))
+		return { k:v for k, v in zip(self._positional_order[position:], args) }
 
 	def __repr__(self):
 		tmpl = '<sasquatch.grammar.verb.%s %s>'
@@ -103,7 +115,9 @@ def get_or_raise(dikt, key, err):
 _builder_log = Log('grammar.verb.builder')
 def verb_builder(name, **kwargs):
 	_builder_log.debug('Loading verb %s'%name)
-	symbol = get_or_raise(kwargs, 'symbol', InvalidVerbError(name, 'symbol'))
+	if not 'symbol'in kwargs:
+		infraerrors.throw(InvalidVerbDefinitionError, verb=name, attr='symbol')
+	symbol = kwargs.get('symbol')
 	desc = kwargs.get('desc', None)
 	hard_required = kwargs.get('hard_required', [])
 	soft_required = kwargs.get('soft_required', [])

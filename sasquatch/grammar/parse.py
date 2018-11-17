@@ -1,7 +1,8 @@
 from ..util.fsm import State, Actor
 from ..util.conv import firstel
 from .lex import VerbT, NounT
-from .. import error as sqerror
+from ..error.syntax import SyntaxErrorHelper as errors
+from ..error.syntax import MissingVerbError, UnknownVerbError, ArgumentsOutOfOrderError
 
 def find_chunk(tokens):
 	verb = None
@@ -16,7 +17,7 @@ def find_chunk(tokens):
 			if verb	is not None:
 				nouns.append(token)
 			else:
-				raise Exception
+				errors.throw(MissingVerbError, token=token)
 	if verb is not None:
 		yield verb, nouns
 
@@ -25,18 +26,20 @@ def find_chunk(tokens):
 def parse(tokens, verbs):
 	for position, (verb, nouns) in enumerate(find_chunk(tokens)):
 		if not verb.name in verbs:
-			raise sqerror.SyntaxError(sqerror.SQSyntaxError ,verb.name, position=position)
-			# raise sqerror.SQSyntaxError(verb.name, position = position)
+			errors.throw(UnknownVerbError, token=verb)
 		verb_cls = verbs[verb.name]
 		positional = []
 		keyword = []
 		for noun in nouns:
 			if noun.keyword is None:
 				if keyword: # If keyword args already exist
-					raise sqerror.SyntaxError(sqerror.SQSyntaxError, noun.value, verb=verb_cls, position=position)
-					# raise sqerror.SQSyntaxError(noun.value, position = position)
+					errors.throw(ArgumentsOutOfOrderError, token=noun)
 				positional.append(noun)
 			else:
 				keyword.append(noun)
-		keyword = {n.keyword:n.value for n in keyword}
-		yield verb_cls(*positional, **keyword)
+		keyword = {n.keyword:n for n in keyword}
+		yield verb_cls(*positional, ctx=verb.context, **keyword)
+
+
+def parserv2(tokens, verbs):
+	pass
