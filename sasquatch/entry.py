@@ -2,7 +2,6 @@ import os.path
 import sys
 
 from .eval import eval_expr
-from .tests import test
 from .util import log
 from .util.conv import FakeSTDIN
 
