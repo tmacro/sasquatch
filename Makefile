@@ -55,11 +55,19 @@ build-pypi:
 .PHONY: build-pypi
 
 build-docker:
-	$(REPORT) Building docker images $(DOCKER_IMAGE)
-	$(STEP) Using tags: latest, $(PKG_VERSION)
-	$(V)docker build -t $(DOCKER_IMAGE) . $(_REDIRECT)
+	$(REPORT) Building docker image $(DOCKER_IMAGE)
+	$(ECHO) -n "   - Using tags: $(DEFAULT_DOCKER_TAG)"
+ifdef DOCKER_TAG_VERSION
+	$(ECHO) -n ", $(PKG_VERSION)"
+endif
+	$(ECHO)
+	$(REPORT) Tagging docker images
+	$(STEP) Tagging $(DOCKER_IMAGE):$(DEFAULT_DOCKER_TAG)
+	$(V)docker build -t $(DOCKER_IMAGE):$(DEFAULT_DOCKER_TAG) . $(_REDIRECT)
+ifdef DOCKER_TAG_VERSION
 	$(STEP) Tagging $(DOCKER_IMAGE):$(PKG_VERSION)
 	$(V)docker tag $(DOCKER_IMAGE):latest $(DOCKER_IMAGE):$(PKG_VERSION) $(_REDIRECT)
+endif
 .PHONY: build-docker
 
 build: build-docker build-pypi
@@ -79,7 +87,7 @@ release-pypi: build-pypi
 	$(V)twine upload "dist/$(PKG_NAME)-$(PKG_VERSION).tar.gz
 .PHONY: release-pypi
 
-release: build release-docker release-pypi
+release: release-docker release-pypi
 .PHONY: release
 
 test:

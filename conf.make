@@ -1,5 +1,8 @@
 DOCKER_USER = tmacro
 DOCKER_REPO = sasquatch
+DEFAULT_DOCKER_TAG = latest
+DOCKER_TAG_VERSION = true
+
 PYPI_PKG    = sasquatch
 
 PKG_NAME = sasquatch
