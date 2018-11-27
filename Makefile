@@ -74,7 +74,13 @@ build: build-docker build-pypi
 	$(REPORT) Finished Building $(PKG_NAME)-$(PKG_VERSION)
 .PHONY: build
 
+docker-login:
+	echo "$(DOCKER_PASSWORD)" | docker login -u "$(DOCKER_USERNAME)" --password-stdin
+
 release-docker: build-docker
+ifdef DOCKER_LOGIN
+	make -e docker-login
+endif
 	$(REPORT) Pushing images to $(DOCKER_IMAGE)
 	$(STEP) Pushing $(DOCKER_IMAGE):$(DEFAULT_DOCKER_TAG)
 	$(V)docker push $(DOCKER_IMAGE):$(DEFAULT_DOCKER_TAG) $(_REDIRECT)

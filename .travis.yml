@@ -10,11 +10,13 @@ jobs:
   include:
   - stage: test
     script: "/bin/true"
-  - stage: docker-login
-    script: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+    name: Run Unit Tests
+  # - stage: docker-login
+  #   script: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
     if: branch = master AND type = push AND sender = tmacro
   - stage: release-edge
     script: make DEFAULT_DOCKER_TAG=edge DOCKER_TAG_VERSION= release-docker
+    name: Build and release docker "edge" image
   - stage: release
     script: make release
 stages:
