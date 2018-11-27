@@ -18,6 +18,6 @@ jobs:
 stages:
   - test
   - name: release-edge
-    if: branch = master AND type IS push AND sender = tmacro AND tag IS empty
+    if: branch = master AND type IS push AND sender = tmacro AND tag IS blank
   - name: release
     if: branch = master AND type IS push AND sender = tmacro AND tag IS present
