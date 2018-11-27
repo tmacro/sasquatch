@@ -1,5 +1,5 @@
 dist: xenial
-
+language: python
 install:
   - pip install -r requirements.txt --ignore-installed
 
