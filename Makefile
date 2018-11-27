@@ -76,10 +76,12 @@ build: build-docker build-pypi
 
 release-docker: build-docker
 	$(REPORT) Pushing images to $(DOCKER_IMAGE)
-	$(STEP) Pushing $(DOCKER_IMAGE):latest
-	$(V)docker push $(DOCKER_IMAGE):latest $(_REDIRECT)
+	$(STEP) Pushing $(DOCKER_IMAGE):$(DEFAULT_DOCKER_TAG)
+	$(V)docker push $(DOCKER_IMAGE):$(DEFAULT_DOCKER_TAG) $(_REDIRECT)
+ifdef DOCKER_TAG_VERSION
 	$(STEP) Pushing $(DOCKER_IMAGE):$(PKG_VERSION)
 	$(V)docker push $(DOCKER_IMAGE):$(PKG_VERSION) $(_REDIRECT)
+endif
 .PHONY: release-docker
 
 release-pypi: build-pypi
