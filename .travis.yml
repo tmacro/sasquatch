@@ -1,0 +1,23 @@
+dist: xenial
+
+install:
+  - pip install -r requirements.txt
+
+script:
+  - make test
+
+jobs:
+  include:
+    - name: test
+      script: /bin/true
+    - name: release-edge
+      script: make DEFAULT_DOCKER_TAG=edge DOCKER_TAG_VERSION= release-docker
+    - name: release
+      script: make release
+
+stages:
+  - test
+  - name: release-edge
+    if: branch = master AND type IS push AND sender = tmacro AND tag IS empty
+  - name: release
+    if: branch = master AND type IS push AND sender = tmacro AND tag IS present
