@@ -8,11 +8,11 @@ script:
 
 jobs:
   include:
-    - name: test
+    - stage: test
       script: /bin/true
-    - name: release-edge
+    - stage: release-edge
       script: make DEFAULT_DOCKER_TAG=edge DOCKER_TAG_VERSION= release-docker
-    - name: release
+    - stage: release
       script: make release
 
 stages:
