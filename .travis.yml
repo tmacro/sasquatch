@@ -10,7 +10,7 @@ jobs:
   include:
   - stage: test
     script: "/bin/true"
-  - stage: docker login
+  - stage: docker-login
     script: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
     if: branch = master AND type = push AND sender = tmacro
   - stage: release-edge
@@ -19,6 +19,7 @@ jobs:
     script: make release
 stages:
 - test
+- docker-login
 - name: release-edge
   if: branch = master AND type = push AND sender = tmacro AND tag IS blank
 - name: release
