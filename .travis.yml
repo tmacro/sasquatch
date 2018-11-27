@@ -1,7 +1,7 @@
 dist: xenial
 
 install:
-  - pip install -r requirements.txt
+  - pip install -r requirements.txt --ignore-installed
 
 script:
   - make test
