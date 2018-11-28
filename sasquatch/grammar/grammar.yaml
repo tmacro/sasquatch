@@ -8,7 +8,7 @@
 #   soft_required: []     These keywords are required but can be built from input
 #   optional: []          These keywords are completely optional
 #   positional_order: []  Positional variables will be mapped to keywords in this order
-#
+#   action:               S3 action to be invoked by verb
 #   Top level keys beginning with "_" will be ignored
 #------------------------------------------------------------------------------
 
@@ -23,6 +23,7 @@ _COMMON:
 LS:
   symbol: ls
   desc: List bucket or objects from storage
+  action: ls
   optional:
     - bucket
   positional_order:
@@ -31,23 +32,27 @@ LS:
 HEAD:
   symbol: head
   desc: Get an object's info from storage
+  action: head
   soft_required: *soft_bkt_key
   optional: *opt_ver_id
 
 GET:
   symbol: get
   desc: Get an object from storage
+  action: get
   soft_required: *soft_bkt_key
   optional: *opt_ver_id
 
 PUT:
   symbol: put
   desc: Upload an object into storage
+  action: put
   soft_required: *soft_bkt_key
 
 CP:
   symbol: cp
   desc: Copy object on the cloud
+  action: cp
   hard_required:
     - target_bucket
   soft_required:

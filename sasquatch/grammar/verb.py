@@ -4,6 +4,7 @@ from ..error.infra import InfraErrorHelper as infraerrors
 from ..error.syntax import SyntaxErrorHelper as stxerrors
 from ..error.syntax import MissingKeywordError, MissingPositionalArgumentError, ExtraKeywordError, TooManyArgumentsError
 from ..util.log import Log
+from .. import s3 as S3_ACTIONS
 
 _log = Log('grammar.verb')
 
@@ -16,6 +17,9 @@ def add_verb(cls):
 
 # The base class for all verbs
 class BaseVerb:
+	_symbol = None
+	_desc = None
+	_action = None
 	# _hard_required  - required everytime, can't be built from input
 	# _soft_required  - required everytime, can be built from input
 	# _optional       - not required - can't be built from input
@@ -33,6 +37,7 @@ class BaseVerb:
 		kwargs.update(self._resolve_positional(*args))
 		self._check_kwargs(**kwargs)
 		self._kwargs = kwargs
+
 	def _check_args(self, *args):
 		takes = len(self._positional_order)
 		given = len(args)
@@ -81,8 +86,6 @@ class BaseVerb:
 		nouns = ' '.join('%s=%s'%(k,v) for k, v in self._kwargs.items())
 		return tmpl%(self._symbol.upper(), nouns)
 
-
-
 	@property
 	def has(self):
 		return list(self._kwargs.keys())
@@ -112,6 +115,9 @@ def get_or_raise(dikt, key, err):
 		raise err
 	return dikt.get(key)
 
+def get_s3_action(name):
+	return getattr(S3_ACTIONS, name, None)
+
 _builder_log = Log('grammar.verb.builder')
 def verb_builder(name, **kwargs):
 	_builder_log.debug('Loading verb %s'%name)
@@ -123,15 +129,21 @@ def verb_builder(name, **kwargs):
 	soft_required = kwargs.get('soft_required', [])
 	optional = kwargs.get('optional', [])
 	positional_order = kwargs.get('positional_order', None)
+	action_name = kwargs.get('action', None)
+	action = get_s3_action(action_name)
+	if action is None:
+		infraerrors.throw(InvalidVerbDefinitionError, verb=name, action=action_name)
 
 	class _Verb(BaseVerb):
 		_symbol = symbol
 		_desc = desc
 		__doc__ = desc
+		_action = action
 		_hard_required = hard_required
 		_soft_required = soft_required
 		_optional = optional
 		_positional_order = positional_order
+
 	_Verb.__name__ = name
 	_Verb.__qualname__= 'grammar.verb.%s'%(name.upper())
 	add_verb(_Verb)
