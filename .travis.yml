@@ -12,11 +12,11 @@ install:
   - pip install --ignore-installed -r requirements.txt pytest
   - python setup.py install
 
+script:
+  - make -e test
+
 jobs:
   include:
-  - stage: test
-    script: pytest
-    name: Run Unit Tests
   - stage: release (edge)
     script: make -e DEFAULT_DOCKER_TAG=edge DOCKER_TAG_VERSION= release-docker
     name: Build and release docker "edge" image
