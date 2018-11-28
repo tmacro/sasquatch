@@ -1,4 +1,3 @@
-import util
 from conftest import *
 import pytest
 import sasquatch
