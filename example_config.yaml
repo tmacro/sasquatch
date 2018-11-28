@@ -1,0 +1,17 @@
+
+
+
+runtime:
+  creds:
+    profile: null
+    access_key: null
+    secret_key: null
+    endpoint: null
+  file: null
+  script: null
+
+profiles:
+  default:
+    access_key: null
+    secret_key: null
+    endpoint: null
