@@ -4,7 +4,9 @@ import sys
 from .eval import eval_expr
 from .util import log
 from .util.conv import FakeSTDIN
+from .util import conf
 
+print(conf.BUILTIN_DEFAULTS)
 
 USAGE='''Not enough arguments provided!
 Usage: %s '<expr>\''''
