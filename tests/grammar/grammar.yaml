@@ -1,0 +1,19 @@
+---
+# This file contains examples of sq clauses for use in testing
+
+
+valid:
+  - ls
+  - ls:mybucket
+  - ls:bucket=mybucket
+  - head:mybucket:myobject
+  - head:bucket=mybucket:key=myobject
+  - head:bucket=mybucket:key=myobject
+  - ls:mybucket|head
+  - ls:mybucket | head
+  - ls:mybucket | cp:myotherbucket
+
+invalid:
+  - ls:bucket=mybucket:bucket=mybucket
+  - ls:mybucket=test
+  - ls|head:test=failure

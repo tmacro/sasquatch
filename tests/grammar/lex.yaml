@@ -1,0 +1,69 @@
+valid:
+- - type: Verb
+    name: ls
+
+- - type: Verb
+    name: ls
+  - type: Noun
+    keyword: null
+    value: mybucket
+
+- - type: Verb
+    name: ls
+  - type: Noun
+    keyword: bucket
+    value: mybucket
+
+- - type: Verb
+    name: head
+  - type: Noun
+    keyword: null
+    value: mybucket
+  - type: Noun
+    keyword: null
+    value: myobject
+
+- - type: Verb
+    name: head
+  - type: Noun
+    keyword: bucket
+    value: mybucket
+  - type: Noun
+    keyword: key
+    value: myobject
+
+- - type: Verb
+    name: head
+  - type: Noun
+    keyword: bucket
+    value: mybucket
+  - type: Noun
+    keyword: key
+    value: myobject
+
+- - type: Verb
+    name: ls
+  - type: Noun
+    keyword: null
+    value: mybucket
+  - type: Verb
+    name: head
+
+- - type: Verb
+    name: ls
+  - type: Noun
+    keyword: null
+    value: mybucket
+  - type: Verb
+    name: head
+
+- - type: Verb
+    name: ls
+  - type: Noun
+    keyword: null
+    value: mybucket
+  - type: Verb
+    name: cp
+  - type: Noun
+    keyword: null
+    value: myotherbucket

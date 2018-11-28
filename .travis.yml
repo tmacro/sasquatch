@@ -2,14 +2,14 @@ dist: xenial
 language: python
 services:
 - docker
+
 install:
-- pip install -r requirements.txt --ignore-installed
-script:
-- make test
+- pip install --ignore-installed -r requirements.txt pytest
+
 jobs:
   include:
   - stage: test
-    script: "/bin/true"
+    script: pytest
     name: Run Unit Tests
   - stage: release (edge)
     script: make -e DEFAULT_DOCKER_TAG=edge DOCKER_TAG_VERSION= release-docker
