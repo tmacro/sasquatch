@@ -9,7 +9,8 @@ services:
 - docker
 
 install:
-- pip install --ignore-installed -r requirements.txt pytest
+  - pip install --ignore-installed -r requirements.txt pytest
+  - python setup.py install
 
 jobs:
   include:
