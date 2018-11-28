@@ -28,4 +28,3 @@ def main():
 	args = parse_args()
 	fd = FakeSTDIN(args['script'])
 	eval_expr(fd)
-	# test.run_tests()
