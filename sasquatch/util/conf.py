@@ -4,14 +4,17 @@ from collections import namedtuple
 from collections.abc import Iterable, Mapping
 from functools import partial
 from itertools import chain, zip_longest
-from pathlib import PosixPath
 
+from pathlib import PosixPath
+from configparser import ConfigParser
+from .arg import parse_args
 import six
 import yaml
 
 from sasquatch import __name__ as pkg_name
 from sasquatch import __version__ as pkg_version
-
+from .log import parse_loglvl
+from pprint import pprint
 # Module level config at bottom
 
 # Sane default values for most things
@@ -37,32 +40,25 @@ BUILTIN_DEFAULTS = {
 # Overrides BUILT_IN_DEFAULTS
 APP_DEFAULTS = {
 	'profiles': {},
-	'logging': {
-		'log_rotation': True
+	'runtime': {
+		'file': None,
+		'script': None,
+		'version_flag': False,
+		'credentials': {
+			'profile': None,
+			'aws_access_key_id': None,
+			'aws_secret_access_key': None,
+			'endpoint': None,
+		},
 	}
-}
+  }
 
 
 # Util functions
-def parse_loglvl(text, default = 30):
-	text = text.lower()
-	levelValues = dict(
-				critical = logging.CRITICAL,
-				error = logging.ERROR,
-				warning = logging.WARNING,
-				info = logging.INFO,
-				debug = logging.DEBUG
-				)
-	return levelValues.get(text, default)
-
-
 
 def safe_load(func, path):
-	conf_path = look_for_file(path)
-	if not conf_path:
-		return None
 	try:
-		with open(conf_path) as configFile:
+		with open(path) as configFile:
 			return func(configFile)
 	except Exception as e:
 		print(e)
@@ -147,6 +143,15 @@ def update_from_env(orig, namespace = [_ROOT_PKG]):
 		]
 	return get_from_env('_'.join(namespace), orig)
 
+def create_namespace(data, name = 'config'):
+	# pprint(data)
+	if _is_mapping(data):
+		mapping = { k: create_namespace(v, k) for k, v in data.items() }
+		return namedtuple(name, list(mapping.keys()))(**mapping)
+	elif _is_iterable(data):
+		return tuple(create_namespace(v, str(i)) for i, v in enumerate(data))
+	else:
+		return data
 
 # Module level config to control the behavior of configuration loading
 MODULE_CONFIG = {
@@ -217,13 +222,18 @@ _FILEPATHS = [fn for fn in _FILEPATHS if fn.exists()]
 
 @loader()
 def aws_credentials():
+	creds_path = PosixPath(os.path.expanduser('~/.aws/credentials'))
+	if creds_path.exists():
+		parser = ConfigParser()
+		parser.read(creds_path)
+		profiles = {s.replace('-', '_'):dict(parser.items(s)) for s in parser.sections()}
+		return dict(profiles=profiles)
 	return dict()
 
 
 @loader()
 def cli_loader():
-	return dict()
-
+	return parse_args(pkg_name)
 
 def load_config(modconf):
 	# Sort out our defaults
@@ -240,20 +250,12 @@ def load_config(modconf):
 							MODULE_CONFIG['default_loader']
 						)
 					)
+	for loader in MODULE_CONFIG['additional_loaders']:
+		conf = recurse_update(conf, loader())
+	if modconf['load_from_env']:
+		conf = update_from_env(conf)
+	conf['logging']['loglvl'] = parse_loglvl(conf['logging']['loglvl']) # Parse the loglvl
+	pprint(conf)
+	return create_namespace(conf)
 
-
-
-# def loadFromEnv(key):
-# 	return os.getenv(key, None)
-
-# def updateFromEn v(config, namespace = []):
-# 	newConfig = config.copy()
-# 	for key, value in config.items():
-# 		if not isinstance(value, dict):
-# 			configVar = '_'.join(namespace + [key.upper()])
-# 			env = loadFromEnv(configVar)
-# 			if env:
-# 				newConfig[key] = env
-# 		else:
-# 			newConfig[key] = updateFromEnv(value, namespace=namespace + [key.upper()])
-# return newConfig
+config = load_config(MODULE_CONFIG)
