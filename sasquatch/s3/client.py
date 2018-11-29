@@ -20,8 +20,8 @@ def _build_client(
 		endpoint = None):
 	if profile is not None:
 		return _build_client(**_fetch_profile(profile))
-	elif not profile and not aws_access_key_id and not aws_access_key_id and not endpoint:
-		return _build_client(profile='default')
+	# elif not profile and not aws_access_key_id and not aws_access_key_id and not endpoint:
+	# 	return _build_client(profile='default')
 	else:
 		return boto3.client(
 			's3',
