@@ -1,5 +1,5 @@
 from .client import with_client
-from ..pipe import extract_record
+# from ..pipe import extract_record
 
 @with_client
 def ls(client, bucket = None):

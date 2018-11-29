@@ -1,16 +1,22 @@
 dist: xenial
 language: python
+python:
+  - 3.7
+  - 3.7-dev
+  - 3.8-dev
+
 services:
 - docker
+
 install:
-- pip install -r requirements.txt --ignore-installed
+  - pip install --ignore-installed -r requirements.txt pytest
+  - python setup.py install
+
 script:
-- make test
+  - make -e test
+
 jobs:
   include:
-  - stage: test
-    script: "/bin/true"
-    name: Run Unit Tests
   - stage: release (edge)
     script: make -e DEFAULT_DOCKER_TAG=edge DOCKER_TAG_VERSION= release-docker
     name: Build and release docker "edge" image

@@ -4,15 +4,7 @@ import sys
 from .eval import eval_expr
 from .util import log
 from .util.conv import FakeSTDIN
-
-
-USAGE='''Not enough arguments provided!
-Usage: %s '<expr>\''''
-
-def parse_args():
-	if len(sys.argv) < 2:
-		raise Exception(USAGE%os.path.basename(sys.argv[0]))
-	return dict(script=sys.argv[1])
+from .util.conf import config
 
 
 def entry():
@@ -20,11 +12,26 @@ def entry():
 		main()
 	except Exception as err:
 		print(err)
-		if log.DEBUG:
-			raise
+		# if log.DEBUG:
+		raise
 		sys.exit(-1)
 
+def print_version():
+	print('%s %s'%(config.meta.name, config.meta.version))
+
 def main():
-	args = parse_args()
-	fd = FakeSTDIN(args['script'])
+	# args = parse_args()
+	# fd = FakeSTDIN(args['script'])
+	# eval_expr(fd)
+	if config.runtime.version_flag:
+		print_version()
+		sys.exit(0)
+	elif config.runtime.file:
+		with open(config.runtime.file) as script_file:
+			fd = FakeSTDIN(script_file.read())
+			fd.name = config.runtime.file
+	elif config.runtime.script:
+		fd = FakeSTDIN(config.runtime.script)
+	else:
+		fd = sys.stdin
 	eval_expr(fd)

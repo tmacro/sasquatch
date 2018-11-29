@@ -147,31 +147,3 @@ def verb_builder(name, **kwargs):
 	_Verb.__name__ = name
 	_Verb.__qualname__= 'grammar.verb.%s'%(name.upper())
 	add_verb(_Verb)
-
-
-
-# @add_verb
-# class LS(BaseVerb):
-# 	_optional = ['bucket', 'key']
-# 	_positional_order = ['bucket', 'key']
-# 	_symbol = 'ls'
-
-
-# @add_verb
-# class HEAD(BaseVerb):
-# 	'''Retrieve info for an object'''
-# 	_symbol = 'head'
-# 	_soft_required = ['bucket', 'key']
-# 	_optional = ['version_id']
-# 	_positional_order = ['bucket', 'key']
-
-
-
-
-# @add_verb
-# class GET(BaseVerb):
-# 	'''Get an object from storage'''
-# 	_symbol = 'get'
-# 	_soft_required = ['bucket', 'key']
-# 	_optional = ['version_id']
-	# _positional_order = ['bucket', 'key']
