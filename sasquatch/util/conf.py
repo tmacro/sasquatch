@@ -255,7 +255,6 @@ def load_config(modconf):
 	if modconf['load_from_env']:
 		conf = update_from_env(conf)
 	conf['logging']['loglvl'] = parse_loglvl(conf['logging']['loglvl']) # Parse the loglvl
-	pprint(conf)
 	return create_namespace(conf)
 
 config = load_config(MODULE_CONFIG)
