@@ -31,7 +31,6 @@ def _build_client(
 		)
 
 CLIENT = _build_client(**config.runtime.credentials._asdict())
-# CLIENT = _build_client(access_key='hello', secret_key='world')
 
 def with_client(func):
 	return partial(func, CLIENT)
