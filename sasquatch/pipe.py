@@ -1,11 +1,19 @@
 from .error.exec import MissingKeywordError
 from .error.exec import ExecErrorHelper as error
 from .grammar.lex import NounT
+from .const import DATETIME_FMT
 
+from pprint import pprint
 class BaseResult:
 	_mapping = {}
 	def __init__(self, data):
 		self._data = data
+
+	def __repr__(self):
+		tmpl = '<sasquatch.pipe.action.%s %s>'
+		nouns = ' '.join('%s=%s'%(k,v) for k, v in self._data.items())
+		return tmpl%(self.__class__.__name__, nouns)
+
 
 	def _convert_arg(self, arg, value):
 		convert_func = getattr(self, '_convert_kw_%s'%arg, None)
@@ -35,24 +43,37 @@ class NounResult(ContextResult):
 
 class StubResult(NounResult):
 	'''For use with beginning verb'''
+	pass
 
-class BucketResult(BaseResult):
+class BucketResult(NounResult):
 	_mapping = {
 		'bucket': 'Name'
 	}
+	def _repr(self):
+		dt = self._data['CreationDate'].strftime(DATETIME_FMT)
+		return '{date} {name}'.format(date=dt, name=self._data['Name'])
 
-class ObjectResult(BaseResult):
+class ObjectResult(NounResult):
 	_mapping = {
 		'bucket': '_bucket',
 		'key': 'Key'
 	}
+	def _repr(self):
+			return '{LastModified} {ContentLength} {_key}'.format(**self._data)
 
-class HeadResult(BaseResult):
+
+
+class HeadResult(NounResult):
+	_tmpl = '''{\n%s\n}'''
 	_mapping = {
 		'bucket': '_bucket',
 		'key': '_key',
 		'version_id': 'VersionId'
 	}
+
+	def _repr(self):
+		return self._tmpl%(',\n'.join('    "%s": "%s"'%(k,v) for k,v in self._data.items() if k != 'ResponseMetadata' and not k.startswith('_')))
+		# return '{LastModified} {ContentLength} {_key}'.format(**self._data)
 
 class ReturnResult(BaseResult):
 	_mapping = {

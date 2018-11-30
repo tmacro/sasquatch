@@ -12,8 +12,8 @@ def entry():
 		main()
 	except Exception as err:
 		print(err)
-		# if log.DEBUG:
-		raise
+		if log.DEBUG:
+			raise
 		sys.exit(-1)
 
 def print_version():

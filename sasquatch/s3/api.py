@@ -1,10 +1,15 @@
 from .client import with_client
+from pprint import pprint
 
 @with_client
 def ls(client, bucket = None):
+	# print(str(bucket))
 	if bucket is None:
-		return client.list_buckets()
-	return client.list_objects(Bucket=bucket)
+		val = client.list_buckets()
+	else:
+		val = client.list_objects(Bucket=bucket)
+	# pprint(val)
+	return val
 
 @with_client
 def head(client, bucket = None, key = None, version_id = None):
