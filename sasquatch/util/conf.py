@@ -49,6 +49,12 @@ APP_DEFAULTS = {
 			'aws_secret_access_key': None,
 			'endpoint': None,
 		},
+	},
+	'logging': {
+		'blacklist': [
+			'botocore',
+			'urllib3'
+		]
 	}
   }
 
