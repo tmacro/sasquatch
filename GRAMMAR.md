@@ -13,7 +13,7 @@ Data flows from left to right with the output of one `Verb` becoming the input f
 
 regex: `[a-zA-Z0-9./=:|]`
 
-> The characters `:=|` area reserved for language delimiters
+> The characters `:=|` are reserved for language delimiters
 
 
 ## Verbs
@@ -40,7 +40,7 @@ The output of each `Verb` becomes the `Nouns` for the next `Verb` in the chain, 
 	# List a bucket and HEAD each object
 	ls:mybucket | head
 
-	# Copy only media files from one bucket to another
+	# Copy only mp4 files from one bucket to another
 	ls:mymedia | gr:.*\.mp4$ | cp:mymp4s
 
 	# Count the number of object successfully replicated
@@ -50,7 +50,7 @@ The output of each `Verb` becomes the `Nouns` for the next `Verb` in the chain, 
 
 ## Nouns
 
-`Nouns` come in two flavors, **positional** and **keyword**, however all `Nouns` have any associated keyword.
+`Nouns` come in two flavors, **positional** and **keyword**, however all `Nouns` have an associated keyword.
 Internally all positional `Nouns` are mapped to  keywords for identification, as such positional `Nouns` can be thought of as a less verbose form of keyword `Nouns`  that are provided to the user for convenience.
 
 ```

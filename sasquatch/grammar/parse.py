@@ -24,8 +24,8 @@ def find_chunk(tokens):
 # The sq language only consists of two different symbols (Verbs & Nouns)
 # and has no concept of "reserved words" so parsing is straighforward.
 # Since Nouns must have a preceding Verb we simply iterate over our tokens
-# grouping Verbs and their following Nouns, rasing an Exception if
-# we find a nonexistent Verb or Nouns without a Verb.
+# grouping Verbs and their following Nouns, raising an Exception if
+# we find a nonexistent Verb or any Noun without a preceding Verb.
 def parse(tokens, verbs):
 	for position, (verb, nouns) in enumerate(find_chunk(tokens)):
 		if not verb.name in verbs:
