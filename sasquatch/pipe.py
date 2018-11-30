@@ -1,11 +1,6 @@
-from enum import Enum
-from collections.abc import ABCMeta
 from .error.exec import MissingKeywordError
 from .error.exec import ExecErrorHelper as error
-
-class ResultTypes(Enum):
-	BUCKET = 1
-	OBJECT = 2
+from .grammar.lex import NounT
 
 class BaseResult:
 	_mapping = {}
@@ -26,7 +21,20 @@ class BaseResult:
 		return self._convert_arg(arg, value)
 
 	def args(self, *args):
-		return { k:self._get_arg(k) for k in args }
+		return { k: self._get_arg(k) for k in args }
+
+class ContextResult(BaseResult):
+	def __init__(self, data, ctx=None):
+		super().__init__(data)
+		self._context = ctx
+
+class NounResult(ContextResult):
+	def _convert_arg(self, arg, value):
+		value = super()._convert_arg(arg, value)
+		return NounT(None, value, self._context)
+
+class StubResult(NounResult):
+	'''For use with beginning verb'''
 
 class BucketResult(BaseResult):
 	_mapping = {
@@ -44,4 +52,9 @@ class HeadResult(BaseResult):
 		'bucket': '_bucket',
 		'key': '_key',
 		'version_id': 'VersionId'
+	}
+
+class ReturnResult(BaseResult):
+	_mapping = {
+		'return_code': '_return_code'
 	}
