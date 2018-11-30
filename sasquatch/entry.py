@@ -20,9 +20,6 @@ def print_version():
 	print('%s %s'%(config.meta.name, config.meta.version))
 
 def main():
-	# args = parse_args()
-	# fd = FakeSTDIN(args['script'])
-	# eval_expr(fd)
 	if config.runtime.version_flag:
 		print_version()
 		sys.exit(0)
@@ -34,4 +31,4 @@ def main():
 		fd = FakeSTDIN(config.runtime.script)
 	else:
 		fd = sys.stdin
-	eval_expr(fd)
+	sys.exit(eval_expr(fd).get('return_code', 0))

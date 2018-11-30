@@ -4,7 +4,8 @@ from ..error.infra import InfraErrorHelper as infraerrors
 from ..error.syntax import SyntaxErrorHelper as stxerrors
 from ..error.syntax import MissingKeywordError, MissingPositionalArgumentError, ExtraKeywordError, TooManyArgumentsError
 from ..util.log import Log
-from .. import s3 as S3_ACTIONS
+from ..action import ACTIONS
+from ..action.base import Action
 
 _log = Log('grammar.verb')
 
@@ -12,6 +13,7 @@ VERBS = {}
 
 def add_verb(cls):
 	VERBS[cls._symbol] = cls
+	return cls
 
 
 
@@ -19,10 +21,9 @@ def add_verb(cls):
 class BaseVerb:
 	_symbol = None
 	_desc = None
-	_action = None
 	# _hard_required  - required everytime, can't be built from input
 	# _soft_required  - required everytime, can be built from input
-	# _optional       - not required - can't be built from input
+	# _optional       - not required - can be built from input
 	_hard_required = []
 	_soft_required = []
 	_optional = []
@@ -50,7 +51,7 @@ class BaseVerb:
 		required = self._hard_required[:]
 		optional = self._optional[:]
 		# _soft_required becomes hard if strict is True
-		# otherwise _ soft_required is optional
+		# otherwise _soft_required is optional
 		if strict:
 			required += self._soft_required[:]
 		else:
@@ -100,7 +101,7 @@ class BaseVerb:
 	@property
 	def wants(self):
 		return list(chain(
-			self._needs,
+			self.needs,
 			self._optional
 		))
 
@@ -109,6 +110,10 @@ class BaseVerb:
 		has = self.has
 		return list(filter(lambda k: k not in has, self.needs))
 
+	@property
+	def keywords(self):
+		return { k: v for k, v in self._kwargs if v is not None}
+
 
 def get_or_raise(dikt, key, err):
 	if key not in dikt:
@@ -116,7 +121,7 @@ def get_or_raise(dikt, key, err):
 	return dikt.get(key)
 
 def get_s3_action(name):
-	return getattr(S3_ACTIONS, name, None)
+	return ACTIONS.get(name, Action)
 
 _builder_log = Log('grammar.verb.builder')
 def verb_builder(name, **kwargs):
@@ -131,19 +136,23 @@ def verb_builder(name, **kwargs):
 	positional_order = kwargs.get('positional_order', None)
 	action_name = kwargs.get('action', None)
 	action = get_s3_action(action_name)
-	if action is None:
-		infraerrors.throw(InvalidVerbDefinitionError, verb=name, action=action_name)
+	# if action is None:
+	# 	infraerrors.throw(InvalidVerbDefinitionError, verb=name, action=action_name)
 
-	class _Verb(BaseVerb):
+	class _Verb(action, BaseVerb):
 		_symbol = symbol
 		_desc = desc
 		__doc__ = desc
-		_action = action
 		_hard_required = hard_required
 		_soft_required = soft_required
 		_optional = optional
 		_positional_order = positional_order
 
 	_Verb.__name__ = name
-	_Verb.__qualname__= 'grammar.verb.%s'%(name.upper())
+	_Verb.__qualname__= '%s'%(name.upper())
 	add_verb(_Verb)
+
+@add_verb
+class EndingVerb(ACTIONS['_final'], BaseVerb):
+	_symbol = '_end'
+	_optional = ['return_code']
