@@ -1,21 +1,47 @@
 from enum import Enum
-from functools import partial
+from collections.abc import ABCMeta
+from .error.exec import MissingKeywordError
+from .error.exec import ExecErrorHelper as error
 
-class RecordType(Enum):
-	SINGLE = 1
-	LIST = 2
-
-class DataTypes(Enum):
+class ResultTypes(Enum):
 	BUCKET = 1
 	OBJECT = 2
 
-def _extract_record(key, data):
-	for value in data.get(key, [])
-		yield value
+class BaseResult:
+	_mapping = {}
+	def __init__(self, data):
+		self._data = data
 
-def extract_record(name):
-	def outer(f):
-		def inner(*args, **kwargs):
-			return partial(_extract_record, name), f(*args, **kwargs)
-		return inner
-	return outer
+	def _convert_arg(self, arg, value):
+		convert_func = getattr(self, '_convert_kw_%s'%arg, None)
+		if convert_func is not None:
+			return convert_func(value)
+		return value
+
+	def _get_arg(self, arg):
+		key = self._mapping.get(arg)
+		if key is None:
+			return None
+		value = self._data.get(key)
+		return self._convert_arg(arg, value)
+
+	def args(self, *args):
+		return { k:self._get_arg(k) for k in args }
+
+class BucketResult(BaseResult):
+	_mapping = {
+		'bucket': 'Name'
+	}
+
+class ObjectResult(BaseResult):
+	_mapping = {
+		'bucket': '_bucket',
+		'key': 'Key'
+	}
+
+class HeadResult(BaseResult):
+	_mapping = {
+		'bucket': '_bucket',
+		'key': '_key',
+		'version_id': 'VersionId'
+	}

@@ -22,7 +22,7 @@ class BaseVerb:
 	_action = None
 	# _hard_required  - required everytime, can't be built from input
 	# _soft_required  - required everytime, can be built from input
-	# _optional       - not required - can't be built from input
+	# _optional       - not required - can be built from input
 	_hard_required = []
 	_soft_required = []
 	_optional = []
@@ -108,6 +108,10 @@ class BaseVerb:
 	def missing(self):
 		has = self.has
 		return list(filter(lambda k: k not in has, self.needs))
+
+	@property
+	def keywords(self):
+		return self._kwargs.copy()
 
 
 def get_or_raise(dikt, key, err):
