@@ -1,11 +1,10 @@
 from .client import with_client
-# from ..pipe import extract_record
 
 @with_client
 def ls(client, bucket = None):
 	if bucket is None:
-		return extract_record('Buckets'), client.list_buckets()
-	return extract_record('Contents'), client.list_objects(Bucket=bucket)
+		return client.list_buckets()
+	return client.list_objects(Bucket=bucket)
 
 @with_client
 def head(client, bucket = None, key = None, version_id = None):
