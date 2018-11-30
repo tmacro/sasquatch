@@ -12,6 +12,7 @@ valid:
   - ls:mybucket|head
   - ls:mybucket | head
   - ls:mybucket | cp:myotherbucket
+  - ls | head
 
 invalid:
   - ls:bucket=mybucket:bucket=mybucket

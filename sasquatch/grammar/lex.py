@@ -90,15 +90,18 @@ class Word(State):
 
 class Verb(Word):
 	_name = 'Verb'
-	_valid_previous = [None, 'Noun']
-	_valid_next = ['Noun']
+	_valid_previous = [None, 'Noun', 'Verb']
+	_valid_next = ['Noun', 'Verb']
 	_word_delim = r'[:|#]'
 
 	def _process(self, char):
 		if char == ' ':
 			return None
 		if self._is_end(char):
-			self._transition('Noun')
+			if char == ':':
+				self._transition('Noun')
+			elif char == '|':
+				self._transition('Verb')
 			return VerbT(self._token)
 		self._add(char)
 

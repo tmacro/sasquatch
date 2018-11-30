@@ -112,9 +112,9 @@ class Machine:
 	def _do_transition(self):
 		if self._needs_transition():
 			if self._current and not self._current.allow_to(self._transition_to):
-				raise Exception('Cannot transition to %s from %s')
+				raise Exception('Cannot transition to %s from %s'%(self._current._name, self._transition_to._name))
 			if not self._transition_to.allow_from(self._current):
-				raise Exception('Cannot transition from %s to %s')
+				raise Exception('Cannot transition from %s to %s'%(self._current._name, self._transition_to._name))
 			self._current = self._transition_to(self.transition)
 			self._transition_to = None
 

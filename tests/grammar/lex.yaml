@@ -67,3 +67,8 @@ valid:
   - type: Noun
     keyword: null
     value: myotherbucket
+
+- - type: Verb
+    name: ls
+  - type: Verb
+    name: head
