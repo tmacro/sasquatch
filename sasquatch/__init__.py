@@ -7,6 +7,6 @@ from . import cli
 from .util.conf import config
 from .util.log import setupLogging
 
-setupLogging(config.meta.name, __version__, loglvl=config.logging.loglvl)
+setupLogging(config.meta.name, __version__, **config.logging._asdict())
 
 from . import entry
