@@ -14,7 +14,6 @@ import yaml
 from sasquatch import __name__ as pkg_name
 from sasquatch import __version__ as pkg_version
 from .log import parse_loglvl
-from pprint import pprint
 # Module level config at bottom
 
 # Sane default values for most things
@@ -27,7 +26,7 @@ BUILTIN_DEFAULTS = {
 	},
 	'logging': {
 		"logfile" : None,
-		"loglvl" : "debug",
+		"loglvl" : "info",
 		"log_rotation": False,
 		"logfmt" : '%(asctime)s %(name)s %(levelname)s: %(message)s',
 		"datefmt" : '%d-%m-%y %I:%M:%S %p',
@@ -123,7 +122,6 @@ def recurse_update(orig, new):
 	return new
 
 def get_from_env(key, default = None):
-	print(key)
 	return os.environ.get(key, default)
 
 _ROOT_PKG = pkg_name.upper()
@@ -144,7 +142,6 @@ def update_from_env(orig, namespace = [_ROOT_PKG]):
 	return get_from_env('_'.join(namespace), orig)
 
 def create_namespace(data, name = 'config'):
-	# pprint(data)
 	if _is_mapping(data):
 		mapping = { k: create_namespace(v, k) for k, v in data.items() }
 		return namedtuple(name, list(mapping.keys()))(**mapping)

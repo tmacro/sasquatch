@@ -29,7 +29,6 @@ class TextMachine(Machine):
 	def _filter_lines(self, lines):
 		for lineno, line in enumerate(lines):
 			stripped = line.strip()
-			print('"%s"\n"%s"'%(line, stripped))
 			if stripped and not self._is_comment(stripped):
 				yield lineno, stripped
 
@@ -142,7 +141,6 @@ def _lexer():
 def tokenize(grammar):
 	_log.debug('Lexing %s'%grammar)
 	lexer = _lexer()
-	# print(grammar)
 	tokens = list(
 				filter(
 					lambda t: t is not None,

@@ -93,7 +93,7 @@ class Machine:
 		self.transition(starting._name)
 
 	def _is_valid(self, name):
-		self._log.debug(type(name))
+		# self._log.debug(type(name))
 		return name in self._available
 
 	@staticmethod
@@ -128,5 +128,5 @@ class Machine:
 		return self._current(data)
 
 	def __call__(self, data):
-		self._log.debug(data)
+		# self._log.debug(data)
 		return self.process(data)

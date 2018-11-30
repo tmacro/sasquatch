@@ -55,7 +55,6 @@ class BaseAction(argparse.Action):
 	def __call__(self, parser, namespace, value, option_string=None):
 		if value is Undefined:
 			return None
-		print(value)
 		opt_value = self._build_value(self._path, value)
 		if hasattr(namespace, self.dest):
 			updated = recurse_update(getattr(namespace, self.dest), opt_value)
