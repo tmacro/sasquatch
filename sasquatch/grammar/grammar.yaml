@@ -62,3 +62,12 @@ CP:
   positional_order:
     - target_bucket
     - target_key
+
+LV:
+  symbol: lv
+  desc: List object versions from a bucket or versions of a key
+  action: lv
+  soft_required:
+    - bucket
+  optional:
+    - key

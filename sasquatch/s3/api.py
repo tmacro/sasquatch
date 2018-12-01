@@ -1,5 +1,4 @@
 from .client import with_client
-from pprint import pprint
 
 @with_client
 def ls(client, bucket = None):
@@ -8,8 +7,13 @@ def ls(client, bucket = None):
 		val = client.list_buckets()
 	else:
 		val = client.list_objects(Bucket=bucket)
-	# pprint(val)
 	return val
+
+@with_client
+def lv(client, bucket = None, key = None):
+	if key is None:
+		prefix = ''
+	return client.list_object_versions(Bucket=bucket, Prefix=prefix)
 
 @with_client
 def head(client, bucket = None, key = None, version_id = None):
