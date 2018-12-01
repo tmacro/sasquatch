@@ -124,7 +124,7 @@ get:<bucket>:<key>:[versionid]
 
 ```
 
-GET and object
+GET an object
 
 
 
@@ -160,7 +160,7 @@ eg `gr:!:rejecthispattern`
 
 gr:<regex>
 
-gr:<regex>
+gr:!:<regex>
 
 ```
 
