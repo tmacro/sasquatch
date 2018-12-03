@@ -61,6 +61,15 @@ class ObjectResult(NounResult):
 	def _repr(self):
 			return '{LastModified} {ContentLength} {_key}'.format(**self._data)
 
+class ObjectVersionResult(NounResult):
+	_mapping = {
+		'bucket': '_bucket',
+		'key': 'Key',
+		'version_id': 'VersionId'
+	}
+	def _repr(self):
+		size = self._data.get('Size', 'DM')
+		return '{LastModified} {_size:>10} {VersionId} {Key}'.format(_size = size, **self._data)
 
 
 class HeadResult(NounResult):
