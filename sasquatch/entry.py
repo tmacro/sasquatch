@@ -10,6 +10,9 @@ from .util.conf import config
 def entry():
 	try:
 		main()
+	except KeyboardInterrupt:
+		print(' Received SIGINT', file=sys.stderr)
+		sys.exit(0)
 	except Exception as err:
 		print(err)
 		if log.DEBUG:
