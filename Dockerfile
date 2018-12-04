@@ -1,4 +1,4 @@
-FROM tmacro/python:3
+FROM tmacro/python:latest
 
 ADD ./requirements.txt /tmp
 RUN python -m pip install -r /tmp/requirements.txt
