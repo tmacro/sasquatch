@@ -71,3 +71,17 @@ LV:
     - bucket
   optional:
     - key
+
+GR:
+  symbol: gr
+  desc: Filter keys using regex
+  action: gr
+  hard_required:
+    - regex
+  soft_required:
+    - key
+  optional:
+    - v
+  positional_order:
+    - regex
+    - v
