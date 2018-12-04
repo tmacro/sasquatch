@@ -2,18 +2,36 @@ from .client import with_client
 
 @with_client
 def ls(client, bucket = None):
-	# print(str(bucket))
 	if bucket is None:
-		val = client.list_buckets()
+		yield client.list_buckets()
 	else:
-		val = client.list_objects(Bucket=bucket)
-	return val
+		next_marker = None
+		is_truncated = True
+		while is_truncated:
+			if next_marker:
+				page = client.list_objects(Bucket=bucket, Marker=next_marker)
+			else:
+				page = client.list_objects(Bucket=bucket)
+			yield page
+			is_truncated = page.get('IsTruncated', False)
+			next_marker = page.get('NextMarker', None)
+			if is_truncated and next_marker is None:
+				next_marker = page['Contents'][-1]['Key']
 
 @with_client
 def lv(client, bucket = None, key = None):
 	if key is None:
 		prefix = ''
-	return client.list_object_versions(Bucket=bucket, Prefix=prefix)
+	is_truncated = True
+	next_marker = None
+	next_version = None
+	while is_truncated:
+		kwargs = { k:v for k, v in dict(KeyMarker=next_marker, VersionIdMarker=next_version) if v is not None }
+		page = client.list_object_versions(Bucket=bucket, Prefix=prefix, **kwargs)
+		yield page
+		is_truncated = page.get('IsTruncated', False)
+		next_marker = page.get('NextMarker', None)
+		next_version = page.get('NextVersionIdMarker')
 
 @with_client
 def head(client, bucket = None, key = None, version_id = None):

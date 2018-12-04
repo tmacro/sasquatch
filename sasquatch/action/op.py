@@ -7,9 +7,9 @@ class HeadAction(Action):
 	_name = 'head'
 	def _process(self, **kwargs):
 		kwargs = self._extract_from_noun(**kwargs)
-		res = s3api.head(**kwargs)
 		bucket = kwargs['bucket']
 		key = kwargs['key']
+		res = s3api.head(**kwargs)
 		return HeadResult(
 			dict(
 				_key=key,

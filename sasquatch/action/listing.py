@@ -8,17 +8,16 @@ class ListAction(Action):
 	_name = 'ls'
 
 	def __list_buckets(self, **kwargs):
-		res = s3api.ls(**kwargs)
-		for bucket in res['Buckets']:
-			yield dict(**bucket)
-
+		for page in s3api.ls(**kwargs):
+			for bucket in page['Buckets']:
+				yield dict(**bucket)
 
 	def _list_objects(self, **kwargs):
 		kwargs = self._extract_from_noun(**kwargs)
-		res = s3api.ls(**kwargs)
 		bucket = kwargs.get('bucket')
-		for obj in res['Contents']:
-			yield dict(_bucket=bucket, **obj)
+		for page in s3api.ls(**kwargs):
+			for obj in page['Contents']:
+				yield dict(_bucket=bucket, **obj)
 
 	def _process(self, **kwargs):
 		if kwargs.get('bucket', None) is not None:
@@ -37,9 +36,10 @@ class ListVersionAction(Action):
 
 	def _process(self, **kwargs):
 		kwargs = self._extract_from_noun(**kwargs)
-		result = s3api.lv(**kwargs)
-		for version in chain(
-			result['Versions'] if 'Versions' in result else [],
-			result['DeleteMarkers'] if 'DeleteMarkers' in result else []):
-			version['_bucket'] = kwargs.get('bucket')
-			yield ObjectVersionResult(version, ctx=self._context)
+		bucket = kwargs.get('bucket')
+		for page in s3api.lv(**kwargs):
+			for version in chain(
+				page['Versions'] if 'Versions' in page else [],
+				page['DeleteMarkers'] if 'DeleteMarkers' in page else []):
+				version['_bucket'] = bucket
+				yield ObjectVersionResult(version, ctx=self._context)
