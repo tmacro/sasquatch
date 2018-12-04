@@ -1,7 +1,5 @@
 from .base import Action, add_action
 from ..s3 import api as s3api
-# from ..pipe import BucketResult, ObjectResult, ObjectVersionResult
-# from itertools import chain
 import re
 
 
