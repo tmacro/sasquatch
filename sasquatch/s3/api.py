@@ -26,12 +26,22 @@ def lv(client, bucket = None, key = None):
 	next_marker = None
 	next_version = None
 	while is_truncated:
-		kwargs = { k:v for k, v in dict(KeyMarker=next_marker, VersionIdMarker=next_version) if v is not None }
-		page = client.list_object_versions(Bucket=bucket, Prefix=prefix, **kwargs)
+		if next_marker is not None and next_version is not None:
+			page = client.list_object_versions(
+						Bucket=bucket,
+						Prefix=prefix,
+						KeyMarker=next_marker,
+						VersionIdMarker=next_version
+					)
+		else:
+			page = client.list_object_versions(
+						Bucket=bucket,
+						Prefix=prefix
+					)
 		yield page
 		is_truncated = page.get('IsTruncated', False)
-		next_marker = page.get('NextMarker', None)
-		next_version = page.get('NextVersionIdMarker')
+		next_marker = page.get('NextKeyMarker', None)
+		next_version = page.get('NextVersionIdMarker', None)
 
 @with_client
 def head(client, bucket = None, key = None, version_id = None):
