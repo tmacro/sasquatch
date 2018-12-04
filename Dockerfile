@@ -9,4 +9,4 @@ RUN cd /usr/local/src \
 	&& python setup.py install
 
 ENTRYPOINT [ "sq" ]
-CMD ["help"]
+CMD ["--help"]
