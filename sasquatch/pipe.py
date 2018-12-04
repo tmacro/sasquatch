@@ -3,7 +3,6 @@ from .error.exec import ExecErrorHelper as error
 from .grammar.lex import NounT
 from .const import DATETIME_FMT
 
-from pprint import pprint
 class BaseResult:
 	_mapping = {}
 	def __init__(self, data):
@@ -59,7 +58,7 @@ class ObjectResult(NounResult):
 		'key': 'Key'
 	}
 	def _repr(self):
-			return '{LastModified} {ContentLength} {_key}'.format(**self._data)
+		return '{LastModified} {Size:>10} {Key}'.format(**self._data)
 
 class ObjectVersionResult(NounResult):
 	_mapping = {
