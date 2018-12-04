@@ -23,9 +23,13 @@ class GrepAction(BaseFilter):
 		compiled = re.compile(self._kwargs['regex'].value)
 		replaced = self._kwargs['regex']._replace(value=compiled)
 		self._kwargs['regex'] = replaced
+		if 'v' in self._kwargs:
+			self.__truthy = False
+		else:
+			self.__truthy = True
 
 	def _process(self, **kwargs):
 		kwargs = self._extract_from_noun(**kwargs)
 		if kwargs['regex'].search(kwargs['key']):
-			return True
-		return False
+			return self.__truthy
+		return not self.__truthy
