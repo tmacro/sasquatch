@@ -87,3 +87,9 @@ class ReturnResult(BaseResult):
 	_mapping = {
 		'return_code': '_return_code'
 	}
+
+
+# class ReplicationConfigResult(BaseResult):
+# 	_mapping = {
+# 		'status':
+# 	}
