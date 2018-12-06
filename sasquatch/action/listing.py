@@ -2,10 +2,17 @@ from .base import Action, add_action
 from ..s3 import api as s3api
 from ..pipe import BucketResult, ObjectResult, ObjectVersionResult
 from itertools import chain
+from ..util.log import Log
+
+_log = Log('action.listing')
 
 @add_action
 class ListAction(Action):
 	_name = 'ls'
+
+	def __init__(self, *args, **kwargs):
+		self._log = _log.getChild('ListAction')
+		super().__init__(*args, **kwargs)
 
 	def __list_buckets(self, **kwargs):
 		for page in s3api.ls(**kwargs):
@@ -15,17 +22,21 @@ class ListAction(Action):
 	def _list_objects(self, **kwargs):
 		kwargs = self._extract_from_noun(**kwargs)
 		bucket = kwargs.get('bucket')
+		self._log.debug('Listing objects from %s'%bucket)
 		for page in s3api.ls(**kwargs):
-			for obj in page['Contents']:
+			for obj in page.get('Contents', []):
 				yield dict(_bucket=bucket, **obj)
 
 	def _process(self, **kwargs):
 		if kwargs.get('bucket', None) is not None:
+			self._log.debug('bucket keyword found, listing objects')
 			result_type = ObjectResult
 			result_func = self._list_objects
 		else:
+			self._log.debug('No bucket keyword found, listing buckets')
 			result_type = BucketResult
 			result_func = self.__list_buckets
+
 		for result in result_func(**kwargs):
 			yield result_type(result, ctx=self._context)
 

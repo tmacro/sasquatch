@@ -2,11 +2,15 @@ import sys
 from ..pipe import StubResult, ReturnResult
 from ..error.syntax import MissingKeywordError
 from ..error.syntax import SyntaxErrorHelper as error
-
+from ..util.log import Log
 import types
+
+_log = Log('action.base')
+
 ACTIONS = {}
 
 def add_action(cls):
+	_log.debug('Adding Action %s'%cls._name)
 	ACTIONS[cls._name] = cls
 	return cls
 
@@ -17,6 +21,7 @@ class Action:
 		super().__init__(*args, **kwargs)
 
 	def _collect_keywords(self, value):
+		_log.debug('Collecting keywords: [ %s ]'%', '.join(self.wants))
 		from_value = value.args(*self.wants)
 		from_value.update(self._kwargs)
 		try:
@@ -48,6 +53,7 @@ class Action:
 			Expects to be passed a iterable of results
 			and to yield a result for each
 		'''
+		_log.debug('Processing %s'%self)
 		for result in results:
 			kwargs = self._collect_keywords(result)
 			value = self._process(**kwargs)
@@ -81,6 +87,3 @@ class FinalAction(Action):
 
 	def _finish(self):
 		return ReturnResult({'_return_code': self.__return_code})
-
-	def do(self, results):
-		return super().do(results)
