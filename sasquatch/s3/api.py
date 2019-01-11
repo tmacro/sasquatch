@@ -1,3 +1,5 @@
+from pathlib import PosixPath
+
 import botocore
 
 from ..util.log import Log, log_call
@@ -68,8 +70,14 @@ def head(client, bucket = None, key = None, version_id = None):
 	return client.head_object(Bucket=bucket, Key=key, VersionId=version_id)
 
 @with_client
+@log_call('s3.api', 'Making api call `{func}` {kwargs}')
 def get(client, bucket = None, key = None, version_id = None):
-	pass
+	kwargs = dict(Bucket=bucket, Key=key)
+	if version_id is None:
+		_log.debug('No VersionId provided, GET s3://%s/%s'%(bucket, key))
+		return client.get_object(Bucket=bucket, Key=key)
+	_log.debug('Got VersionId provided, GET s3://%s/%s ver: %s'%(bucket, key, version_id))
+	return client.get_object(Bucket=bucket, Key=key, VersionId=version_id)
 
 @with_client
 def put(client, bucket = None, key = None):
