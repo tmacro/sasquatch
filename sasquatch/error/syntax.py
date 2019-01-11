@@ -12,7 +12,7 @@ class SyntaxErrorHelper(BaseErrorHelper):
 		if 'token' in kwargs:
 			token = kwargs.get('token')
 			return BaseErrorHelper.throw(cls, **token.context._asdict(), **kwargs)
-		if 'ctx' in kwargs:
+		if 'ctx' in kwargs and kwargs['ctx'] is not None:
 			ctx = kwargs.get('ctx')
 			return BaseErrorHelper.throw(cls, **ctx._asdict(), **kwargs)
 		BaseErrorHelper.throw(cls, **kwargs)
@@ -43,15 +43,15 @@ class UnknownVerbError(SQSyntaxError):
 
 
 class MissingKeywordError(SQSyntaxError):
-	_msg = '{verb} missing required keyword {keyword}'
+	_msg = '{verb} missing required keyword `{keyword}`'
 
 
 class ExtraKeywordError(SQSyntaxError):
-	_msg = '"{verb}" passed extra keyword "{keyword}"'
+	_msg = '"{verb}" passed extra keyword `{keyword}`'
 
 
 class MissingPositionalArgumentError(SQSyntaxError):
-	_msg = '{verb} missing required keyword {keyword}'
+	_msg = '{verb} missing required keyword `{keyword}`'
 	def __init__(self, **kwargs):
 		if 'token' in kwargs:
 			token = kwargs.get('token')

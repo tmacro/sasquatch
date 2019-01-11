@@ -109,3 +109,16 @@ def log_on_error(logger, target_handler = None, flush_lvl = logging.ERROR, capac
 				logger.removeHandler(handler)
 		return wrapper
 	return decorator
+
+def log_call(logger='log.log_call', msg='Calling {func} with {args} {kwargs}'):
+	def outer(func):
+		_log = Log(logger)
+		def inner(*args, **kwargs):
+			_log.debug(msg.format(
+				func=func.__name__,
+				args=str(args),
+				kwargs=str(kwargs)
+			))
+			return func(*args, **kwargs)
+		return inner
+	return outer

@@ -1,7 +1,6 @@
 from collections.abc import Iterable
 from io import StringIO
 
-
 def firstel(lst):
 	'''
 	Safely returns the first element of a list/tuple/iterator/etc
