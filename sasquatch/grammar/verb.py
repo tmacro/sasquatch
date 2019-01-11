@@ -36,6 +36,7 @@ class BaseVerb:
 			self._positional_order = self._soft_required[:]
 		self._check_args(*args)
 		kwargs.update(self._resolve_positional(*args))
+		kwargs = self._remove_empty(**kwargs)
 		self._check_kwargs(**kwargs)
 		self._kwargs = kwargs
 
@@ -81,6 +82,9 @@ class BaseVerb:
 		if not self._check_args(*args):
 			raise Exception
 		return { k:v for k, v in zip(self._positional_order[position:], args) }
+
+	def _remove_empty(self, **kwargs):
+		return { k: v for k, v in kwargs.items() if len(v.value) }
 
 	def __repr__(self):
 		tmpl = '<sasquatch.grammar.verb.%s %s>'

@@ -2,6 +2,7 @@ from .error.exec import MissingKeywordError
 from .error.exec import ExecErrorHelper as error
 from .grammar.lex import NounT
 from .const import DATETIME_FMT
+from pathlib import PosixPath
 
 class BaseResult:
 	_mapping = {}
@@ -70,7 +71,6 @@ class ObjectVersionResult(NounResult):
 		size = self._data.get('Size', 'DM')
 		return '{LastModified} {_size:>10} {VersionId} {Key}'.format(_size = size, **self._data)
 
-
 class HeadResult(NounResult):
 	_tmpl = '''{\n%s\n}'''
 	_mapping = {
@@ -82,6 +82,25 @@ class HeadResult(NounResult):
 	def _repr(self):
 		return self._tmpl%(',\n'.join('    "%s": "%s"'%(k,v) for k,v in self._data.items() if k != 'ResponseMetadata' and not k.startswith('_')))
 		# return '{LastModified} {ContentLength} {_key}'.format(**self._data)
+
+class GetResult(NounResult):
+	_tmpl = 'download s3://{_bucket}/{_key} to {relative_filename}'
+	_mapping = {
+		'bucket': '_bucket',
+		'key': '_key',
+		'filename': '_filename',
+		'version_id': 'VersionId',
+		'filesize': 'ContentLength'
+	}
+
+	def _repr(self):
+		cwd = PosixPath('.').resolve()
+		try:
+			path = PosixPath(self._data['_filename']).relative_to(cwd).as_posix()
+			path = './' + path
+		except ValueError:
+			path = self._data['_filename']
+		return self._tmpl.format(relative_filename=path, **self._data)
 
 class ReturnResult(BaseResult):
 	_mapping = {

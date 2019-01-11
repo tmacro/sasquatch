@@ -41,7 +41,14 @@ GET:
   desc: Get an object from storage
   action: get
   soft_required: *soft_bkt_key
-  optional: *opt_ver_id
+  optional:
+    - version_id
+    - filename
+  positional_order:
+    - bucket
+    - key
+    - version_id
+    - filename
 
 PUT:
   symbol: put
@@ -70,6 +77,9 @@ LV:
   soft_required:
     - bucket
   optional:
+    - key
+  positional_order:
+    - bucket
     - key
 
 LR:
