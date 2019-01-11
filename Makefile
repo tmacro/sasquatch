@@ -92,7 +92,7 @@ endif
 
 release-pypi: build-pypi
 	$(REPORT) Releasing $(PKG_NAME)-$(PKG_VERSION) to PyPi
-	$(V)twine upload "dist/$(PKG_NAME)-$(PKG_VERSION).tar.gz
+	$(V)twine upload "dist/$(PKG_NAME)-$(PKG_VERSION).tar.gz"
 .PHONY: release-pypi
 
 release: release-docker release-pypi
