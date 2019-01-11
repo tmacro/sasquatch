@@ -23,12 +23,14 @@ jobs:
   - stage: release
     script: make -e release
     name: Build and release docker image
+
 stages:
 - test
-- name: release edge
+- name: release (edge)
   if: branch = master AND type = push AND sender = tmacro
 - name: release
   if: branch = master AND type = push AND sender = tmacro AND tag IS present
+
 env:
   global:
     - secure: fL7diVhkIgFXk4xN5fe38mN8ZgtmzIX1mcEFSv514g71uHX7lf962UJYYLQkLsGOspBkWhkvII/ZuWSaCxngxflKqVnqFW81w/5oUuNntR50FRo+fssEpHzhLzMDxSGIbDJMzcHxpQYFyyKrN88WE0cByLgV2E3/n42Q6dRVESvjb5AD4kqxlFoesmmpJITXnxs4f6oi4sJCWQl7CW3Vetu7orfH63vfZF+pHCTo0paox/dR/U9y4elqk495gsE3VBqICw7BPzoTe+tteqg10HLrk16foF5sQ0nugfzZsB39449RntpV7CwMF3m6gMh21xXVYU3ALVbjJSZ5rA4JR+k2+N1LVphznQYcWn3WFgISEeDaTTF+wvv6UflqhnBMChl4VjlW8ykadhid95j5TgGAME36JIDGlZ0x8plFEBnkKxrVihDaAICHDKX0stqm+7/uufU+1LDlUdfIee1dxdm6jbBCyJBjRXSwAKwmtdTTRorJd8p04zU71tRET2vXPlvGL2SGIuuFDKKB7lHF0b1lzRsllmyTTwqbBtg8MdCHTx9NUKahyhRvRPWuP3DRi/e/X4T/7FPcIj0m1UUv3sJqN+kGY4ZTmn0vjuS6j2/jY6iBjK+oyMvzq3PsEawF73Ly1m1t8h/lVXG89ZCbeLiVt/Kn95DlnIoqoETJHP8=
