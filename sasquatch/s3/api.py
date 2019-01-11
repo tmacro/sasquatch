@@ -1,4 +1,5 @@
 from .client import with_client
+import botocore
 
 @with_client
 def ls(client, bucket = None):
@@ -60,3 +61,12 @@ def put(client, bucket = None, key = None):
 @with_client
 def cp(client, target_bucket = None, target_key = None, bucket = None, key = None):
 	pass
+
+
+@with_client
+def get_bucket_replication(client, bucket = None):
+	try:
+		return client.get_bucket_replication(Bucket=bucket)
+	except botocore.exceptions.ClientError:
+		pass
+	return None

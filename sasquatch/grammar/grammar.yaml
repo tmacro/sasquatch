@@ -72,6 +72,15 @@ LV:
   optional:
     - key
 
+LR:
+  symbol: lr
+  desc: List buckets or objects with replication enabled
+  action: lr
+  optional:
+    - bucket
+  positional_order:
+    - bucket
+
 GR:
   symbol: gr
   desc: Filter keys using regex
