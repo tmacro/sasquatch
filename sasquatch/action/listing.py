@@ -55,13 +55,13 @@ class ListReplicationAction(Action):
 			for bucket in page['Buckets']:
 				bkt_repl = s3api.get_bucket_replication(bucket=bucket['Name'])
 				if bkt_repl is not None:
-					yield BucketResult(**bucket)
+					yield dict(**bucket)
 
 	def __list_objects(self, **kwargs):
 		bucket = kwargs.get('bucket')
 		if s3api.get_bucket_replication(bucket=bucket):
 			for page in s3api.ls(**kwargs):
-				for obj in page['Contents']:
+				for obj in page.get('Contents', []):
 					key = obj.get('Name')
 					yield dict(_bucket=bucket, _key=key, **obj)
 
@@ -70,7 +70,7 @@ class ListReplicationAction(Action):
 		kwargs = self._extract_from_noun(**kwargs)
 		if kwargs.get('bucket', None) is not None:
 			result_type = ObjectResult
-			result_func = self._list_objects
+			result_func = self.__list_objects
 		else:
 			result_type = BucketResult
 			result_func = self.__list_buckets
