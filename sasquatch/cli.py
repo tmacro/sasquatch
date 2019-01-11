@@ -13,11 +13,11 @@ def verbose(*args, **kwargs):
 	return 'debug'
 
 
-@option('-a', '--access-key', dest='runtime.credentials.aws_access_key_id', metavar='ACCESS_KEY')
+@option('-a', '--access-key', dest='runtime.credentials.access_key', metavar='ACCESS_KEY')
 def access_key(value):
 	return value
 
-@option('-s', '--secret-key', dest='runtime.credentials.aws_secret_access_key', metavar='SECRET_KEY')
+@option('-s', '--secret-key', dest='runtime.credentials.secret_key', metavar='SECRET_KEY')
 def secret_key(value):
 	return value
 

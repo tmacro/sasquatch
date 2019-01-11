@@ -15,8 +15,8 @@ def _fetch_profile(name):
 
 def _build_client(
 		profile = None,
-		aws_access_key_id = None,
-		aws_secret_access_key = None,
+		access_key = None,
+		secret_key = None,
 		endpoint = None):
 	if profile is not None:
 		return _build_client(**_fetch_profile(profile))
@@ -25,8 +25,8 @@ def _build_client(
 	else:
 		return boto3.client(
 			's3',
-			aws_access_key_id=aws_access_key_id,
-			aws_secret_access_key=aws_secret_access_key,
+			aws_access_key_id=access_key,
+			aws_secret_access_key=secret_key,
 			endpoint_url=endpoint
 		)
 

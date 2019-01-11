@@ -45,8 +45,8 @@ APP_DEFAULTS = {
 		'version_flag': False,
 		'credentials': {
 			'profile': None,
-			'aws_access_key_id': None,
-			'aws_secret_access_key': None,
+			'access_key': None,
+			'secret_key': None,
 			'endpoint': None,
 		},
 	},
@@ -223,6 +223,10 @@ for directory in _SEARCH_DIRS:
 
 _FILEPATHS = [fn for fn in _FILEPATHS if fn.exists()]
 
+_CRED_FIELD_CONVERSIONS = {
+	'aws_access_key_id': 'access_key',
+	'aws_secret_access_key': 'secret_key'
+}
 @loader()
 def aws_credentials():
 	creds_path = PosixPath(os.path.expanduser('~/.aws/credentials'))
@@ -230,7 +234,12 @@ def aws_credentials():
 		parser = ConfigParser()
 		parser.read(creds_path)
 		profiles = {s.replace('-', '_'):dict(parser.items(s)) for s in parser.sections()}
-		return dict(profiles=profiles)
+		normalized = {}
+		for profile, fields in profiles.items():
+			normalized[profile] = {}
+			for k, v in fields.items():
+				normalized[profile][_CRED_FIELD_CONVERSIONS.get(k, k)] = v
+		return dict(profiles=normalized)
 	return dict()
 
 
@@ -241,6 +250,8 @@ def cli_loader():
 def load_config(modconf):
 	# Sort out our defaults
 	conf = recurse_update(BUILTIN_DEFAULTS, APP_DEFAULTS)
+	for loader in MODULE_CONFIG['additional_loaders']:
+		conf = recurse_update(conf, loader())
 	if modconf['load_from_file']:
 		# Iter over our found config files loading each one
 		# Do it in reverse so that our highest priority one gets applies last
@@ -253,8 +264,6 @@ def load_config(modconf):
 							MODULE_CONFIG['default_loader']
 						)
 					)
-	for loader in MODULE_CONFIG['additional_loaders']:
-		conf = recurse_update(conf, loader())
 	if modconf['load_from_env']:
 		conf = update_from_env(conf)
 	conf['logging']['loglvl'] = parse_loglvl(conf['logging']['loglvl']) # Parse the loglvl
