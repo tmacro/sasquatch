@@ -42,7 +42,7 @@ class GetAction(Action):
 				dict(
 					_key=key,
 					_bucket=bucket,
-					_filename=filename,
+					_filename=path,
 					**obj
 				)
 			)
