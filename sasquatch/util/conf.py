@@ -169,11 +169,11 @@ MODULE_CONFIG = {
 	# Maps extensions to loaders
 	# loaders should expect a file obj and return a dict
 	'file_loaders': {
-		'.yaml': yaml.load,
-		'.yml': yaml.load,
+		'.yaml': yaml.full_load,
+		'.yml': yaml.full_load,
 		'.json': json.load,
 	},
-	'default_loader': yaml.load, # Used for file without extensions
+	'default_loader': yaml.full_load, # Used for file without extensions
 	# Functions should expect no arguments and return a dict
 	'additional_loaders': []
 }

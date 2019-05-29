@@ -84,7 +84,7 @@ class State:
 
 
 class Machine:
-	'''FSM for preccessing stream data'''
+	'''FSM for proccessing stream data'''
 	def __init__(self, starting, available):
 		self._log = Log('util.fsm.Machine')
 		self._available = { s._name: s for s in available }

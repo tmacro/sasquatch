@@ -12,7 +12,7 @@ _log = Log('grammar')
 GRAMMAR_FILE = os.path.dirname(__file__) + '/grammar.yaml'
 
 with open(GRAMMAR_FILE) as grammar_file:
-	grammar = yaml.load(grammar_file)
+	grammar = yaml.full_load(grammar_file)
 	for label, vconf in grammar.items():
 		if label.startswith('_'):
 			continue

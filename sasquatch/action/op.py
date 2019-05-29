@@ -37,7 +37,7 @@ class GetAction(Action):
 			path = self.__gen_filename(key, version_id, filename)
 			if path is None:
 				error.throw(InvalidFilePathError, ctx=kwargs['filename'].context, filepath=filename)
-			self.__write_obj(obj['Body'], filename)
+			self.__write_obj(obj['Body'], path)
 			return GetResult(
 				dict(
 					_key=key,

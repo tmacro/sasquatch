@@ -98,7 +98,7 @@ class GetResult(NounResult):
 		try:
 			path = PosixPath(self._data['_filename']).relative_to(cwd).as_posix()
 			path = './' + path
-		except ValueError:
+		except (ValueError, TypeError):
 			path = self._data['_filename']
 		return self._tmpl.format(relative_filename=path, **self._data)
 
